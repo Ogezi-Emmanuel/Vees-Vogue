@@ -20,8 +20,16 @@ const mediaAssets = {
   ],
 };
 
+interface ValidationRule {
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: RegExp;
+  futureOnly?: boolean;
+}
+
 // Enhanced form validation
-const validationRules = {
+const validationRules: Record<string, ValidationRule> = {
   name: {
     required: true,
     minLength: 2,

@@ -5,13 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
-// All media assets
+// All media assets with poster images for videos
 const mediaAssets = {
   videos: [
-    { src: "/Vees Hero.mp4", title: "Hero Collection", description: "The signature VEES VOGUE experience" },
-    { src: "/Vees 1.mp4", title: "Bridal Elegance", description: "Timeless sophistication for your special day" },
-    { src: "/Vees 4.mp4", title: "Prom Glamour", description: "Unforgettable moments in luxury" },
-    { src: "/Vees Prom 2.mp4", title: "Custom Creations", description: "Designed uniquely for you" },
+    { src: "/Vees Hero.mp4", title: "Hero Collection", description: "The signature VEES VOGUE experience", poster: "/Vees 2.jpg" },
+    { src: "/Vees 1.mp4", title: "Bridal Elegance", description: "Timeless sophistication for your special day", poster: "/Vees 2.jpg" },
+    { src: "/Vees 4.mp4", title: "Prom Glamour", description: "Unforgettable moments in luxury", poster: "/Vees Prom 1.jpg" },
+    { src: "/Vees Prom 2.mp4", title: "Custom Creations", description: "Designed uniquely for you", poster: "/Vees Prom 1.jpg" },
   ],
   images: [
     { src: "/Vees 2.jpg", title: "Bridal Masterpiece", category: "Bridal" },
@@ -40,6 +40,15 @@ const validationRules: Record<string, ValidationRule> = {
   eventDate: { required: true, futureOnly: true },
   budget: { required: true },
   inspiration: { maxLength: 2000 },
+};
+
+// Helper to generate WhatsApp links for gallery items
+const getWhatsAppLinkForProduct = (title: string, type: 'image' | 'video', category?: string) => {
+  const baseUrl = "https://api.whatsapp.com/send?phone=2347046644690";
+  const message = category 
+    ? `Hello VEES VOGUE! I'm interested in the "${title}" (${category}) from your collection. Can you provide more details?`
+    : `Hello VEES VOGUE! I'm interested in the "${title}" from your collection. Can you provide more details?`;
+  return `${baseUrl}&text=${encodeURIComponent(message)}`;
 };
 
 export default function Home() {
@@ -298,9 +307,12 @@ export default function Home() {
               loop
               muted
               playsInline
+              preload="metadata"
+              poster={mediaAssets.videos[activeVideo].poster}
               className="absolute inset-0 w-full h-full object-cover"
             >
               <source src={mediaAssets.videos[activeVideo].src} type="video/mp4" />
+              Your browser does not support the video tag.
             </motion.video>
           </AnimatePresence>
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
@@ -407,12 +419,13 @@ export default function Home() {
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                     <span className="text-champagne text-sm uppercase tracking-wider mb-2">{item.category}</span>
                     <h3 className="font-serif text-2xl mb-4">{item.title}</h3>
                     <a
-                      href="https://api.whatsapp.com/send?phone=2347046644690"
+                      href={getWhatsAppLinkForProduct(item.title, 'image', item.category)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="bg-champagne text-black font-bold py-3 px-6 rounded-full text-center hover:bg-champagne/90 transition-all"
@@ -439,14 +452,17 @@ export default function Home() {
                     loop
                     muted
                     playsInline
+                    preload="metadata"
+                    poster={video.poster}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   >
                     <source src={video.src} type="video/mp4" />
+                    Your browser does not support the video tag.
                   </video>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                     <h3 className="font-serif text-2xl mb-4 text-champagne">{video.title}</h3>
                     <a
-                      href="https://api.whatsapp.com/send?phone=2347046644690"
+                      href={getWhatsAppLinkForProduct(video.title, 'video')}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="bg-champagne text-black font-bold py-3 px-6 rounded-full text-center hover:bg-champagne/90 transition-all"

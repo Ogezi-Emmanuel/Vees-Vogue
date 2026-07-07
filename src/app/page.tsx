@@ -71,7 +71,7 @@ export default function Home() {
   ) => {
     try {
       const { name, value } = e.target;
-      let sanitizedValue = value.trim();
+      let sanitizedValue = value;
 
       // Sanitize inputs
       if (name === "name") {
@@ -82,7 +82,8 @@ export default function Home() {
 
       // Validate on change if touched
       if (touched[name]) {
-        validateField(name, sanitizedValue);
+        // For validation, trim the value
+        validateField(name, sanitizedValue.trim());
       }
     } catch (error) {
       console.error("Input error:", error);
@@ -94,7 +95,7 @@ export default function Home() {
   ) => {
     const { name, value } = e.target;
     setTouched((prev) => ({ ...prev, [name]: true }));
-    validateField(name, value);
+    validateField(name, value.trim());
   };
 
   const validateField = (name: string, value: string) => {
@@ -150,7 +151,9 @@ export default function Home() {
     const newErrors: Record<string, string> = {};
 
     Object.keys(validationRules).forEach((key) => {
-      const error = validateField(key, formData[key as keyof typeof formData]);
+      const value = formData[key as keyof typeof formData];
+      // Trim only for validation purposes
+      const error = validateField(key, value.trim());
       if (error) {
         isValid = false;
         newErrors[key] = error;
@@ -186,9 +189,9 @@ export default function Home() {
     e.preventDefault();
     try {
       if (validateForm()) {
-        const safeName = encodeURIComponent(formData.name);
+        const safeName = encodeURIComponent(formData.name.trim());
         const safeService = encodeURIComponent(formData.service);
-        const safeDate = encodeURIComponent(formData.eventDate);
+        const safeDate = encodeURIComponent(formData.eventDate.trim());
         const safeBudget = encodeURIComponent(formatBudgetForDisplay(formData.budget));
         const safeInspiration = encodeURIComponent(formData.inspiration);
 
